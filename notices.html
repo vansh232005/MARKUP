@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Important Notices - Student Portal</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../css/notices.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <main class="notices-section">
+        <header class="notices-header">
+            <h1 class="notices-title">Important Notices</h1>
+        </header>
+
+        <div class="notice-grid">
+            <!-- Examination Notice -->
+            <a href="examination.html" class="notice-card notice-exam">
+                <div class="notice-content">
+                    <div class="notice-meta">
+                        <span class="notice-tag">
+                            <i class="fas fa-file-alt notice-icon"></i>
+                            Examination
+                        </span>
+                        <span>Updated Today</span>
+                    </div>
+                    <h2 class="notice-title">Examination Schedule/Update</h2>
+                    <p>View latest examination schedules, updates, and important announcements</p>
+                </div>
+            </a>
+
+            <!-- Registration Notice -->
+            <a href="registration.html" class="notice-card notice-registration">
+                <div class="notice-content">
+                    <div class="notice-meta">
+                        <span class="notice-tag">
+                            <i class="fas fa-user-plus notice-icon"></i>
+                            Registration
+                        </span>
+                        <span>Last Week</span>
+                    </div>
+                    <h2 class="notice-title">Course Registration</h2>
+                    <p>Course registration details and deadlines for the upcoming semester</p>
+                </div>
+            </a>
+
+            <!-- Timetable Notice -->
+            <a href="timetable.html" class="notice-card notice-timetable">
+                <div class="notice-content">
+                    <div class="notice-meta">
+                        <span class="notice-tag">
+                            <i class="fas fa-calendar-alt notice-icon"></i>
+                            Schedule
+                        </span>
+                        <span>2 days ago</span>
+                    </div>
+                    <h2 class="notice-title">Class Cancellations/Timetable Changes</h2>
+                    <p>Check for any changes in class schedules or cancellations</p>
+                </div>
+            </a>
+
+            <!-- Holiday Notice -->
+            <a href="holidays.html" class="notice-card notice-holiday">
+                <div class="notice-content">
+                    <div class="notice-meta">
+                        <span class="notice-tag">
+                            <i class="fas fa-umbrella-beach notice-icon"></i>
+                            Holiday
+                        </span>
+                        <span>1 week ago</span>
+                    </div>
+                    <h2 class="notice-title">Holidays/Campus Closures</h2>
+                    <p>Upcoming holidays and campus closure information</p>
+                </div>
+            </a>
+
+            <!-- Club/Activity Notice -->
+            <a href="activities.html" class="notice-card notice-activity">
+                <div class="notice-content">
+                    <div class="notice-meta">
+                        <span class="notice-tag">
+                            <i class="fas fa-users notice-icon"></i>
+                            Activities
+                        </span>
+                        <span>3 days ago</span>
+                    </div>
+                    <h2 class="notice-title">Club/Activity Notices</h2>
+                    <p>Latest updates from clubs and campus activities</p>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <script>
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add intersection observer for card animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        document.querySelectorAll('.notice-card').forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

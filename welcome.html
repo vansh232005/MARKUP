@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Student Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css">
+    <link rel="stylesheet" href="css/modern-theme.css">
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- Three.js for background effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            /* Refined color palette */
+            --primary: #4B92E5; /* softer blue */
+            --secondary: #6B4CC4; /* muted violet */
+            --accent: #2BB894; /* calmer mint */
+            --dark: #0A1A2F; /* richer navy */
+            --muted: rgba(255,255,255,0.06);
+            --glass: rgba(255,255,255,0.04);
+            --light: #F0F9FF;
+            --success: #0EA573;
+            --text-primary: rgba(255,255,255,0.95);
+            --text-secondary: rgba(255,255,255,0.7);
+            --card-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --card-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loading-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader {
+            width: 120px;
+            height: 120px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .loader-circle {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-radius: 50%;
+            animation: rotate 2s linear infinite;
+        }
+
+        .loader-circle.outer {
+            border-top-color: var(--accent);
+            animation-duration: 2s;
+        }
+
+        .loader-circle.middle {
+            width: 80%;
+            height: 80%;
+            top: 10%;
+            left: 10%;
+            border-right-color: var(--primary);
+            animation-duration: 1.5s;
+            animation-direction: reverse;
+        }
+
+        .loader-circle.inner {
+            width: 60%;
+            height: 60%;
+            top: 20%;
+            left: 20%;
+            border-bottom-color: var(--secondary);
+            animation-duration: 1s;
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0.95;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loading-subtext {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* color variables are defined globally in theme.css to keep a consistent palette */
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(1200px 600px at 85% 30%, rgba(96,165,250,0.12), transparent),
+                        radial-gradient(900px 500px at 10% 80%, rgba(124,58,237,0.08), transparent),
+                        linear-gradient(180deg, var(--dark) 0%, #041026 100%);
+            color: var(--text);
+            overflow-x: hidden;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: none; /* hidden until loader finishes */
+            flex-direction: column;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Modern Background Animation */
+        .bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.28;
+            animation: rotate 40s linear infinite; /* slower, subtler motion */
+        }
+
+        .gradient-1 {
+            background: var(--primary);
+            top: -200px;
+            left: -200px;
+        }
+
+        .gradient-2 {
+            background: var(--secondary);
+            bottom: -200px;
+            right: -200px;
+            animation-delay: -5s;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.05); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        /* legacy welcome card (slides are used now) */
+
+        .welcome-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: skewX(-15deg);
+            animation: shine 6s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Button Styles */
+        .btn-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .welcome-btn {
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--button-bg);
+            color: var(--button-text);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.06);
+            color: var(--muted-text);
+        }
+
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.04);
+            color: var(--text);
+            transform: translateY(-2px);
+        }
+
+        /* Improved Slide Styles */
+        .slide-content {
+            max-width: 900px;
+            width: 100%;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 60px 40px;
+            margin: 0 auto;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .slide-text {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 42px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+            border-radius: 28px;
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .slide-text::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        }
+
+        .slide-text::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        }
+
+        .slide-text:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--light) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        p {
+            font-size: 1.3rem;
+            margin-bottom: 48px;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .start-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 36px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            background: linear-gradient(135deg, var(--light) 0%, rgba(255, 255, 255, 0.9) 100%);
+            border: none;
+            border-radius: 99px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            text-decoration: none;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: none; /* remove float to reduce motion */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .start-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s ease;
+        }
+
+        .start-button:hover::before {
+            transform: translateX(100%);
+        }
+
+        .swiper-slide-active .start-button {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.3s;
+        }
+
+        .start-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+            background: var(--light);
+        }
+
+        .start-button i {
+            transition: transform 0.3s ease;
+        }
+
+        .start-button:hover i {
+            transform: translateX(5px);
+        }
+
+        .welcome-icon {
+            font-size: 4.2rem;
+            margin-bottom: 28px;
+            color: var(--primary);
+            text-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+            animation: none; /* static icon to avoid distraction */
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-6px) rotate(1deg); }
+        }
+        .swiper {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center; /* vertically center slides */
+            justify-content: center; /* horizontally center slides */
+        }
+
+        .swiper-slide {
+            opacity: 0;
+            transform: scale(0.985);
+            transition: all 0.6s cubic-bezier(0.22, 0.8, 0.2, 1);
+            will-change: transform, opacity;
+        }
+
+        .swiper-slide-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .swiper-slide-prev,
+        .swiper-slide-next {
+            opacity: 0.65;
+            transform: scale(0.975);
+        }
+
+        .slide {
+            position: relative;
+            padding: 40px 20px;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide-content {
+            max-width: 800px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            margin: 0 auto;
+            justify-content: center;
+        }
+
+        .slide-text {
+            color: var(--text);
+            text-align: left;
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+            padding: 28px;
+            border-radius: var(--card-radius);
+            box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+            backdrop-filter: blur(8px) saturate(120%);
+            position: relative;
+            overflow: visible;
+        }
+
+        /* Inline illustration inside the text card for visual interest */
+        .inline-illustration {
+            position: absolute;
+            top: -36px;
+            right: -36px;
+            width: 220px;
+            height: auto;
+            border-radius: 14px;
+            box-shadow: 0 24px 60px rgba(2,6,23,0.6);
+            transform: rotate(-4deg);
+            opacity: 0.98;
+        }
+
+            /* subtle float animation for inline illustration */
+            @keyframes float-small {
+                0% { transform: translateY(0) rotate(-4deg); }
+                50% { transform: translateY(-8px) rotate(-3deg); }
+                100% { transform: translateY(0) rotate(-4deg); }
+            }
+
+            .inline-illustration { animation: float-small 6s ease-in-out infinite; }
+
+        @media (max-width: 900px) {
+            .inline-illustration { display: none; }
+            .slide-content { grid-template-columns: 1fr; }
+            .slide-image { margin-top: 20px; }
+        }
+
+        .slide-text {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 24px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .welcome-heading {
+            font-size: clamp(2.4rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            background: linear-gradient(135deg, var(--light) 0%, var(--primary) 50%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            text-wrap: balance;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.25);
+        }
+
+        .swiper-slide-active .welcome-heading {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .welcome-subheading {
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            line-height: 1.7;
+            
+            max-width: 580px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s;
+        }
+
+        .swiper-slide-active .welcome-subheading {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: var(--light);
+        }
+
+        .feature-item i {
+            width: 30px;
+            margin-right: 15px;
+            color: var(--accent);
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            padding: 18px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            background: var(--light);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .swiper-slide-active .cta-button {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.5s ease 0.6s;
+        }
+
+        .cta-button:hover {
+            background: var(--accent);
+            color: var(--light);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button i {
+            margin-left: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .cta-button:hover i {
+            transform: translateX(5px);
+        }
+
+        .swiper-pagination-bullet {
+            width: 10px;
+            height: 10px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.18);
+            opacity: 0.9;
+            transition: transform 0.22s ease, background 0.22s ease;
+        }
+
+        .swiper-pagination-bullet-active {
+            transform: scale(1.25);
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            box-shadow: 0 6px 20px rgba(96,165,250,0.18);
+        }
+
+        .swiper-button-next,
+        .swiper-button-prev {
+            color: var(--light);
+        }
+
+        /* Custom text navigation buttons (Previous / Next) */
+        .swiper-nav {
+            position: absolute;
+            bottom: 36px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 5;
+        }
+
+        .swiper-nav-btn {
+            background: rgba(255,255,255,0.04);
+            color: var(--light);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: transform 0.18s ease, background 0.18s ease;
+        }
+
+        .swiper-nav-btn:hover,
+        .swiper-nav-btn:focus {
+            transform: translateY(-4px);
+            background: linear-gradient(90deg, rgba(255,255,255,0.12), rgba(255,255,255,0.08));
+            outline: none;
+        }
+
+        .swiper-nav-btn:focus-visible {
+            box-shadow: 0 0 0 4px rgba(56,189,248,0.12);
+        }
+
+        @media (max-width: 1024px) {
+            .slide-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                padding: 20px;
+                gap: 24px;
+            }
+
+            .slide-text {
+                order: 2;
+                text-align: center;
+            }
+
+            .slide-image {
+                order: 1;
+            }
+
+            .welcome-heading {
+                font-size: 3rem;
+            }
+
+            .feature-item {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-heading {
+                font-size: 2.5rem;
+            }
+
+            .welcome-subheading {
+                font-size: 1.2rem;
+            }
+
+            .feature-item {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <div class="loader">
+            <div class="loader-circle outer"></div>
+            <div class="loader-circle middle"></div>
+            <div class="loader-circle inner"></div>
+        </div>
+        <div class="loading-text">Welcome to Markup</div>
+        <div class="loading-progress">
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <div class="loading-subtext">Loading...</div>
+        </div>
+    </div>
+
+    <style>
+    .loading-progress {
+        margin-top: 20px;
+        width: 200px;
+    }
+    
+    .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 2px;
+        overflow: hidden;
+    }
+    
+    .progress-fill {
+        width: 0%;
+        height: 100%;
+        background: var(--accent);
+        animation: fill 5s linear forwards;
+    }
+    
+    @keyframes fill {
+        0% { width: 0%; }
+        100% { width: 100%; }
+    }
+    .loader-count{
+        margin-top:18px;
+        font-size:28px;
+        color:rgba(255,255,255,0.95);
+        font-weight:700;
+        letter-spacing:0.6px;
+    }
+
+    /* Parallax-friendly gradients */
+    .bg-gradient { will-change: transform; transition: transform 0.12s linear; }
+    </style>
+
+    <div class="page-wrapper">
+        <!-- Background Animation -->
+        <div class="bg-animation">
+            <div class="bg-gradient gradient-1"></div>
+            <div class="bg-gradient gradient-2"></div>
+        </div>
+
+        <!-- Fullscreen Swiper (3 slides) -->
+        <div class="swiper">
+            <div class="swiper-wrapper">
+                <!-- Slide 1: Intro -->
+                <div class="swiper-slide">
+                    <div class="slide">
+                        <div class="slide-content">
+                            <div class="slide-icon">
+                                <i class="fas fa-graduation-cap"></i>
+                            </div>
+                            <h1 class="welcome-heading">Welcome to Markup</h1>
+                            <p class="welcome-subheading">Your comprehensive student portal for tracking academic progress, attendance, and staying updated with important notices.</p>
+                            <div class="slide-decorator"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Features -->
+                <div class="swiper-slide">
+                    <div class="slide">
+                        <div class="slide-content">
+                            <div class="slide-icon">
+                                <i class="fas fa-lightbulb"></i>
+                            </div>
+                            <h1 class="welcome-heading">Smart Learning</h1>
+                            <div class="feature-grid">
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-check-circle"></i>
+                                    </div>
+                                    <span>Interactive Learning Environment</span>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-chart-line"></i>
+                                    </div>
+                                    <span>Real-time Progress Tracking</span>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                    <span>Collaborative Learning</span>
+                                </div>
+                            </div>
+                            <div class="slide-decorator"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: CTA -->
+                <div class="swiper-slide">
+                    <div class="slide">
+                        <div class="slide-content">
+                            <div class="slide-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h1 class="welcome-heading">Ready to Begin?</h1>
+                            <p class="welcome-subheading">Join us to experience a new way of learning and tracking your progress.</p>
+                            <a href="portal.html" class="start-button">
+                                Let's Start with Markup 
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                            <div class="slide-decorator"></div>
+                        </div>
+                    </div>
+                </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pagination / Navigation -->
+            <div class="swiper-pagination"></div>
+            <div class="swiper-nav" role="navigation" aria-label="Slider navigation">
+                <button class="swiper-nav-btn prev" aria-label="Previous slide">Previous</button>
+                <button class="swiper-nav-btn next" aria-label="Next slide">Next</button>
+            </div>
+        </div>
+
+    </div>
+
+    <style>
+        /* Enhanced Slide Styles */
+        .slide {
+            position: relative;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .slide-content {
+            max-width: 900px;
+            width: 100%;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 48px;
+            margin: 0 auto;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+            border-radius: 40px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .slide-icon {
+            font-size: 3rem;
+            margin-bottom: 24px;
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .swiper-slide-active .slide-icon {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-decorator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            width: 100%;
+            margin: 32px 0;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) 0.2s;
+        }
+
+        .swiper-slide-active .feature-grid {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-item {
+            background: rgba(255,255,255,0.03);
+            padding: 24px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.05);
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            font-size: 1.2rem;
+            color: var(--light);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover .feature-icon {
+            transform: scale(1.1) rotate(-5deg);
+        }
+    </style>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script>
+        // Loading Screen Animation & show page content
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingScreen = document.querySelector('.loading-screen');
+            const loadingText = document.querySelector('.loading-subtext');
+            const mainContent = document.querySelector('.page-wrapper');
+            let progress = 0;
+
+            const loadingTexts = [
+                'Preparing your experience...',
+                'Almost there...',
+                'Getting everything ready...',
+                'Just a moment...',
+                'Loading complete!'
+            ];
+
+            const textInterval = setInterval(() => {
+                if (progress < loadingTexts.length) {
+                    loadingText.textContent = loadingTexts[progress];
+                    progress++;
+                }
+            }, 1000);
+
+            // Countdown number for loader (5..0)
+            const countEl = document.createElement('div');
+            countEl.className = 'loader-count';
+            countEl.textContent = '5';
+            loadingScreen.appendChild(countEl);
+            let countdown = 5;
+            const countInterval = setInterval(() => {
+                countdown--;
+                if (countdown >= 0) countEl.textContent = countdown;
+                if (countdown <= 0) clearInterval(countInterval);
+            }, 1000);
+
+                // Parallax background movement (only if user allows motion)
+                const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                const gradients = document.querySelectorAll('.bg-gradient');
+                if(!prefersReduced){
+                    let px = 0, py = 0;
+                    window.addEventListener('mousemove', (e) => {
+                        const nx = (e.clientX / window.innerWidth - 0.5) * 12; // smaller amplitude
+                        const ny = (e.clientY / window.innerHeight - 0.5) * 8;
+                        // gentler smoothing for calmer motion
+                        px += (nx - px) * 0.06;
+                        py += (ny - py) * 0.06;
+                        if (gradients[0]) gradients[0].style.transform = `translate(${px}px, ${py}px) rotate(8deg)`;
+                        if (gradients[1]) gradients[1].style.transform = `translate(${-px}px, ${-py}px) rotate(-6deg)`;
+                    });
+                }
+
+            // After 5s reveal main content and init swiper + animations
+            setTimeout(() => {
+                clearInterval(textInterval);
+                loadingScreen.classList.add('fade-out');
+                mainContent.style.display = 'block';
+
+                // Initialize Swiper (slower autoplay for calmer experience)
+                const swiper = new Swiper('.swiper', {
+                    loop: true,
+                    speed: 1000,
+                    autoplay: {
+                        delay: 9000,
+                        disableOnInteraction: false
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true
+                    },
+                    navigation: {
+                        nextEl: '.swiper-nav .next',
+                        prevEl: '.swiper-nav .prev'
+                    },
+                    keyboard: {
+                        enabled: true,
+                        onlyInViewport: true
+                    }
+                });
+
+                // Wire custom nav buttons to swiper in case Swiper didn't bind automatically
+                document.querySelectorAll('.swiper-nav .prev').forEach(btn=> btn.addEventListener('click', ()=> swiper.slidePrev()));
+                document.querySelectorAll('.swiper-nav .next').forEach(btn=> btn.addEventListener('click', ()=> swiper.slideNext()));
+
+                // Small GSAP entry for visible slide elements (skip if user prefers reduced motion)
+                if(!prefersReduced){
+                    gsap.from('.slide-text', { opacity: 0, y: 10, duration: 0.6, stagger: 0.08 });
+                    // image animations are optional; only animate if present
+                    gsap.from('.slide-image img', { opacity: 0, y: 12, duration: 0.6, delay: 0.15, stagger: 0.08 });
+                } else {
+                    // ensure elements are visible immediately
+                    document.querySelectorAll('.slide-text').forEach(el=> el.style.opacity = 1);
+                }
+
+                // Subtle image parallax inside the active slide
+                const swiperEl = document.querySelector('.swiper');
+                function applyParallax(e){
+                    const rect = swiperEl.getBoundingClientRect();
+                    const nx = ((e.clientX || e.touches?.[0]?.clientX) - rect.left) / rect.width - 0.5;
+                    const ny = ((e.clientY || e.touches?.[0]?.clientY) - rect.top) / rect.height - 0.5;
+                    const activeSlide = swiper.slides[swiper.activeIndex];
+                    if(!activeSlide) return;
+                    const img = activeSlide.querySelector('.slide-image img');
+                    if(img){
+                        const tx = nx * 14; // horizontal parallax amount
+                        const ty = ny * 10; // vertical parallax amount
+                        img.style.transform = `translate(${tx}px, ${ty}px) scale(1.02)`;
+                    }
+                }
+
+                function resetParallax(){
+                    document.querySelectorAll('.slide-image img').forEach(i=> i.style.transform = 'translateY(0) scale(1)');
+                }
+
+                swiperEl.addEventListener('mousemove', applyParallax);
+                swiperEl.addEventListener('touchmove', applyParallax, {passive:true});
+                swiperEl.addEventListener('mouseleave', resetParallax);
+
+                // Animate slide content on slide change
+                swiper.on('slideChange', () => {
+                    const active = swiper.slides[swiper.activeIndex];
+                    // fade in text and image
+                    gsap.fromTo(active.querySelectorAll('.slide-text'), {opacity:0, y:12}, {opacity:1, y:0, duration:0.5});
+                    gsap.fromTo(active.querySelectorAll('.slide-image img'), {opacity:0, y:18}, {opacity:1, y:0, duration:0.6});
+                    // small pop on inline illustration if present
+                    const inline = active.querySelector('.inline-illustration');
+                    if(inline) gsap.fromTo(inline, {scale:0.96, y:-6}, {scale:1, y:0, duration:0.6, ease:'elastic.out(1,0.6)'});
+                });
+
+                // Remove loading screen after fade
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,153 @@
+/* Modern Gradient Theme */
+:root {
+  /* Harmonized semantic colors tuned for the gradient background */
+  --primary: #3aa0d9;    /* muted sky blue */
+  --secondary: #586fd1;  /* softer violet */
+  --accent: #22c1a9;     /* mint accent */
+  --dark: #07172a;       /* deep navy */
+  --bg-darker: #041026;  /* bottom gradient stop */
+  --text: rgba(255,255,255,0.92);    /* primary text color */
+  --muted-text: rgba(255,255,255,0.68); /* secondary text */
+  --glass: rgba(255,255,255,0.04);
+  --light: rgba(255,255,255,0.96);
+  --success: #10B981;
+  --card-glass: rgba(255, 255, 255, 0.02);
+  --card-border: rgba(255, 255, 255, 0.035);
+  --card-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+  --blur-effect: blur(6px);
+  --button-bg: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(250,250,252,0.92));
+  --button-text: #04203a;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(1200px 600px at 85% 30%, rgba(96,165,250,0.06), transparent),
+              radial-gradient(900px 500px at 10% 80%, rgba(124,58,237,0.04), transparent),
+              linear-gradient(180deg, var(--dark) 0%, #041026 100%);
+  color: var(--light);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Glass Card Styles */
+.card,
+.chart-card,
+.table-card {
+  background: var(--card-glass);
+  border: 1px solid var(--card-border);
+  backdrop-filter: var(--blur-effect);
+  box-shadow: var(--card-shadow);
+}
+
+.sidebar {
+  background: rgba(255, 255, 255, 0.02);
+  border-right: 1px solid var(--card-border);
+  backdrop-filter: var(--blur-effect);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+}
+
+.top-bar {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--card-border);
+  backdrop-filter: var(--blur-effect);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.toast {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: var(--blur-effect);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Background Animation */
+.bg-animation {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-gradient {
+  position: absolute;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.28;
+  animation: rotate 40s linear infinite; /* slower rotation for calmer effect */
+  will-change: transform;
+}
+
+.gradient-1 {
+  background: var(--primary);
+  top: -200px;
+  left: -200px;
+}
+
+.gradient-2 {
+  background: var(--secondary);
+  bottom: -200px;
+  right: -200px;
+  animation-delay: -5s;
+}
+
+@keyframes rotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Other Elements */
+table th {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+table td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dropdown-menu {
+  background: var(--card-glass);
+  border: 1px solid var(--card-border);
+  backdrop-filter: var(--blur-effect);
+  box-shadow: var(--card-shadow);
+}
+
+/* Chart Customization */
+canvas {
+  backdrop-filter: none !important;
+}
+
+/* Input Fields */
+input, select, textarea {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--light);
+}
+
+input:focus, select:focus, textarea:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Buttons */
+button, .btn {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+button:hover, .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}

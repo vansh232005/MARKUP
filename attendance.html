@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Record</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/modern-theme.css">
+    <link rel="stylesheet" href="css/attendance.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+    <div class="attendance-container">
+        <div class="attendance-card">
+            <h2 class="attendance-title">Mathematics-III - Attendance (Last 7 Days)</h2>
+            
+            <div class="attendance-grid">
+                <div class="day-column">
+                    <div class="day-header">Mon</div>
+                    <div class="attendance-status status-absent" data-date="2025-11-03">
+                        <span class="status-icon icon-absent"></span>
+                        Absent
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Tue</div>
+                    <div class="attendance-status status-present" data-date="2025-11-04">
+                        <span class="status-icon icon-present"></span>
+                        Present
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Wed</div>
+                    <div class="attendance-status status-present" data-date="2025-11-05">
+                        <span class="status-icon icon-present"></span>
+                        Present
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Thu</div>
+                    <div class="attendance-status status-present" data-date="2025-11-06">
+                        <span class="status-icon icon-present"></span>
+                        Present
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Fri</div>
+                    <div class="attendance-status status-present" data-date="2025-11-07">
+                        <span class="status-icon icon-present"></span>
+                        Present
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Sat</div>
+                    <div class="attendance-status status-present" data-date="2025-11-08">
+                        <span class="status-icon icon-present"></span>
+                        Present
+                    </div>
+                </div>
+                <div class="day-column">
+                    <div class="day-header">Sun</div>
+                    <div class="attendance-status status-present" data-date="2025-11-09">
+                        <span class="status-icon icon-present"></span>
+                        Present
+                    </div>
+                </div>
+            </div>
+
+            <div class="attendance-stat">
+                <div class="stat-item">
+                    <div class="stat-value" data-stat="totalClasses">7</div>
+                    <div class="stat-label">Total Classes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" data-stat="attended">6</div>
+                    <div class="stat-label">Classes Attended</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" data-stat="percentage">85.7%</div>
+                    <div class="stat-label">Attendance Rate</div>
+                </div>
+            </div>
+
+            <div class="attendance-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 85.7%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/attendanceManager.js"></script>
+</body>
+</html>
